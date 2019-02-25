@@ -1,27 +1,27 @@
-import inputTemplate from './input-template';
-import labelTemplate from './label-template';
+import getInputTemplate from './get-input-template';
+import getLabelTemplate from './get-label-template';
 
 const filterSection = document.querySelector(`.main__filter`);
 
-function renderFilter(data) {
+const renderFilter = (data) => {
   const {id, name, count, checked = false, disabled = false} = data;
   const template = document.createElement(`template`);
 
-  const input = inputTemplate(id, checked, disabled);
-  const label = labelTemplate(id, name, count);
+  const input = getInputTemplate(id, checked, disabled);
+  const label = getLabelTemplate(id, name, count);
 
   template.innerHTML = input + label;
   filterSection.appendChild(template.content);
-}
+};
 
-function clearFiltersSection() {
+const clearFiltersSection = () => {
   filterSection.innerHTML = ``;
-}
+};
 
-function addFiltersListener(callback) {
+const addFiltersListener = (callback) => {
   document.querySelectorAll(`.filter__input`).forEach((filter) => {
     filter.addEventListener(`change`, callback);
   });
-}
+};
 
 export {renderFilter, clearFiltersSection, addFiltersListener};

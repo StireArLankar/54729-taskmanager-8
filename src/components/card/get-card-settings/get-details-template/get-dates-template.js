@@ -1,6 +1,6 @@
-import {daysList} from '../../../../../common';
+import {daysList} from '../../../../common';
 
-function datesTemplate(id, date, repeat) {
+const getDatesTemplate = (id, date, repeat) => {
   const repeatCheck = repeat ? repeat : {};
   return `
   <div class="card__dates">
@@ -52,6 +52,6 @@ function datesTemplate(id, date, repeat) {
     </fieldset>
   </div>
   `;
-}
+};
 
-export default datesTemplate;
+export default getDatesTemplate;

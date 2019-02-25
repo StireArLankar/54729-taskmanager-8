@@ -1,4 +1,4 @@
-function inputTemplate(id, checked, disabled) {
+const getInputTemplate = (id, checked, disabled) => {
   return `
   <input
     type="radio"
@@ -8,7 +8,7 @@ function inputTemplate(id, checked, disabled) {
     ${checked ? `checked` : ``}
     ${disabled ? `disabled` : ``}
   />`;
-}
+};
 
-export default inputTemplate;
+export default getInputTemplate;
 

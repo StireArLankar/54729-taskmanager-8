@@ -1,4 +1,4 @@
-function hashtagsTemplate(hashtags) {
+const getHashtagsTemplate = (hashtags) => {
   return `
   <div class="card__hashtag">
     <div class="card__hashtag-list">
@@ -30,6 +30,6 @@ function hashtagsTemplate(hashtags) {
     </div>
   </div>
   `;
-}
+};
 
-export default hashtagsTemplate;
+export default getHashtagsTemplate;

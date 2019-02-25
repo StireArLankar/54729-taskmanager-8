@@ -1,6 +1,6 @@
-import {colorList} from '../../../../common';
+import {colorList} from '../../../common';
 
-function colorsTemplate(id, color) {
+const getColorsTemplate = (id, color) => {
   return `
   <div class="card__colors-inner">
     <h3 class="card__colors-title">Color</h3>
@@ -23,6 +23,6 @@ function colorsTemplate(id, color) {
     </div>
   </div>
   `;
-}
+};
 
-export default colorsTemplate;
+export default getColorsTemplate;

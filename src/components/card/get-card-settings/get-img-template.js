@@ -1,4 +1,4 @@
-function imgTemplate(img) {
+const getImgTemplate = (img) => {
   return `
   <label class="card__img-wrap ${img ? `` : `card__img-wrap--empty`}">
     <input
@@ -13,6 +13,6 @@ function imgTemplate(img) {
     />
   </label>
   `;
-}
+};
 
-export default imgTemplate;
+export default getImgTemplate;

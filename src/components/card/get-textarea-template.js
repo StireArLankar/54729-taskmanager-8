@@ -1,4 +1,4 @@
-function textAreaTemplate(text) {
+const getTextAreaTemplate = (text) => {
   return `
   <div class="card__textarea-wrap">
     <label>
@@ -10,6 +10,6 @@ function textAreaTemplate(text) {
     </label>
   </div>
   `;
-}
+};
 
-export default textAreaTemplate;
+export default getTextAreaTemplate;
