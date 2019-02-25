@@ -1,8 +1,7 @@
 import filterList from './filter-list';
-import {daysList} from './common';
 import {renderFilter, clearFiltersSection, addFiltersListener} from './components/filter';
 import {changeTasks} from './components/card';
-import getTestTask from './mock';
+import {getTestTask} from './mock';
 
 class Task {
   constructor({title, dueDate, tags, picture, color, repeatingDays, isFavourite, isDone}) {
@@ -19,24 +18,26 @@ class Task {
   }
 }
 
-const temp = new Task(getTestTask());
-
-const testTask = {
-  color: `black`,
-  text: `asd`,
-  hashtags: [`repeat`, `cinema`],
-  id: Math.floor(100 * Math.random()),
-  edit: true,
-  repeat: {
-    [daysList[0]]: true
-  }
-};
-
 clearFiltersSection();
 filterList.forEach((filter) => renderFilter(filter));
 addFiltersListener(() => {
-  changeTasks(testTask);
+  const rand = Math.floor(Math.random() * 5) + 1;
+  const array = new Array(rand).fill(1);
+  const tasks = array.map((_el, index) => {
+    const task = new Task(getTestTask());
+    task.index = index;
+    return task;
+  });
+  changeTasks(tasks);
 });
 
-window.onload = changeTasks(testTask, 7);
+window.addEventListener(`load`, () => {
+  const array = new Array(7).fill(1);
+  const tasks = array.map((_el, index) => {
+    const task = new Task(getTestTask());
+    task.index = index;
+    return task;
+  });
+  changeTasks(tasks);
+});
 

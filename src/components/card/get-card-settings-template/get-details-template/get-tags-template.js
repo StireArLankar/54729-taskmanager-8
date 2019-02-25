@@ -1,8 +1,9 @@
-const getHashtagsTemplate = (hashtags) => {
+const getTagsTemplate = ({tags}) => {
+  const hashtags = [...tags];
   return `
   <div class="card__hashtag">
     <div class="card__hashtag-list">
-      ${hashtags.map((hashtag) => `
+      ${hashtags.map((tag) => `
         <span class="card__hashtag-inner">
           <input
             type="hidden"
@@ -11,7 +12,7 @@ const getHashtagsTemplate = (hashtags) => {
             class="card__hashtag-hidden-input"
           />
           <button type="button" class="card__hashtag-name">
-            #${hashtag}
+            #${tag}
           </button>
           <button type="button" class="card__hashtag-delete">
             delete
@@ -32,4 +33,4 @@ const getHashtagsTemplate = (hashtags) => {
   `;
 };
 
-export default getHashtagsTemplate;
+export default getTagsTemplate;

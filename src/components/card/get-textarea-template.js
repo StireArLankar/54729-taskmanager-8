@@ -1,4 +1,4 @@
-const getTextAreaTemplate = (text) => {
+const getTextAreaTemplate = ({title}) => {
   return `
   <div class="card__textarea-wrap">
     <label>
@@ -6,7 +6,7 @@ const getTextAreaTemplate = (text) => {
         class="card__text"
         placeholder="Start typing your text here..."
         name="text"
-      >${text}</textarea>
+      >${title}</textarea>
     </label>
   </div>
   `;
