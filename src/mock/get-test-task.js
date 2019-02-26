@@ -1,38 +1,28 @@
 import {colorList} from '../common';
+import tagList from './tag-list';
+import titleList from './title-list';
 
-const tags = [
-  `cinema`,
-  `entertainment`,
-  `myself`,
-  `cinema`,
-  `homework`,
-  `theory`,
-  `practice`,
-  `intensive`,
-  `keks`
-];
+const getRandomIndex = (length) => {
+  return Math.floor(Math.random() * length);
+};
 
-const getTestTags = (array) => {
+const getRandomDate = (days) => {
+  return Date.now() + 1 + getRandomIndex(days) * 24 * 60 * 60 * 1000;
+};
+
+const getRandomSet = (length, array) => {
   const len = array.length;
-  const set = new Set([
-    array[Math.floor(Math.random() * len)],
-    array[Math.floor(Math.random() * len)],
-    array[Math.floor(Math.random() * len)]
-  ]);
-  return set;
+  const temp = (new Array(length).fill(1)).map(() => array[getRandomIndex(len)]);
+  return (new Set(temp));
 };
 
 const getTestTask = () => {
   return {
-    title: [
-      `Prepare for the pitch`,
-      `find money for travel`,
-      `eat something`,
-    ][Math.floor(Math.random() * 3)],
-    dueDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
-    tags: getTestTags(tags),
+    title: titleList[getRandomIndex(titleList.length)],
+    dueDate: getRandomDate(7),
+    tags: getRandomSet(3, tagList),
     picture: `//picsum.photos/100/100?r=${Math.random()}`,
-    color: colorList[Math.floor(Math.random() * colorList.length)],
+    color: colorList[getRandomIndex(colorList.length)],
     repeatingDays: {
       'mo': true,
       'tu': false,
