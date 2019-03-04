@@ -1,24 +1,19 @@
 import filterList from './filter-list';
-import {daysList} from './common';
 import {renderFilter, clearFiltersSection, addFiltersListener} from './components/filter';
 import {changeTasks} from './components/card';
-
-const testTask = {
-  color: `black`,
-  text: `asd`,
-  hashtags: [`repeat`, `cinema`],
-  id: Math.floor(100 * Math.random()),
-  edit: true,
-  repeat: {
-    [daysList[0]]: true
-  }
-};
+import {getTestTaskList} from './mock';
 
 clearFiltersSection();
 filterList.forEach((filter) => renderFilter(filter));
+
 addFiltersListener(() => {
-  changeTasks(testTask);
+  const rand = Math.floor(Math.random() * 5) + 1;
+  const tasks = getTestTaskList(rand);
+  changeTasks(tasks);
 });
 
-window.onload = changeTasks(testTask, 7);
+window.addEventListener(`load`, () => {
+  const tasks = getTestTaskList(7);
+  changeTasks(tasks);
+});
 

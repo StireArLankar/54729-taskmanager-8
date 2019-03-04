@@ -1,4 +1,4 @@
-function controlBarTemplate() {
+const getControlBarTemplate = () => {
   return `
   <div class="card__color-bar">
     <svg class="card__color-bar-wave" width="100%" height="10">
@@ -6,7 +6,7 @@ function controlBarTemplate() {
     </svg>
   </div>
   `;
-}
+};
 
-export default controlBarTemplate;
+export default getControlBarTemplate;
 

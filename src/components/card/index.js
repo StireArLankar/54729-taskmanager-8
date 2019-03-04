@@ -1,29 +1,29 @@
-import controlTemplate from './control-template';
-import controlBarTemplate from './control-bar-template';
-import textAreaTemplate from './text-area-template';
-import cardSettings from './card-settings';
-import statusBtnsTemplate from './status-btns-template';
+import getControlTemplate from './get-control-template';
+import getControlBarTemplate from './get-control-bar-template';
+import getTextareaTemplate from './get-textarea-template';
+import getCardSettingsTemplate from './get-card-settings-template';
+import getStatusBtnsTemplate from './get-status-btns-template';
 
 const tasksContainer = document.querySelector(`.board__tasks`);
 
-function renderCard(data) {
-  const {color, text, img, hashtags = [], date, repeat, edit, id} = data;
+const renderCard = (data) => {
+  const {repeatingDays, isEditing, color} = data;
   const template = document.createElement(`template`);
   const card = {};
 
-  card.control = controlTemplate();
-  card.controlBar = controlBarTemplate();
-  card.textArea = textAreaTemplate(text);
-  card.settings = cardSettings(id, date, repeat, hashtags, img, color);
-  card.statusBtns = statusBtnsTemplate();
+  card.control = getControlTemplate();
+  card.controlBar = getControlBarTemplate();
+  card.textarea = getTextareaTemplate(data);
+  card.settings = getCardSettingsTemplate(data);
+  card.statusBtns = getStatusBtnsTemplate();
 
   const content = `
-  <article class="card ${edit ? `card--edit` : ``} ${repeat ? `card--repeat` : ``}">
+  <article class="card ${isEditing ? `card--edit` : ``} ${repeatingDays === {} || repeatingDays ? `card--repeat` : ``} ${`card--${color}`}">
     <form class="card__form" method="get">
       <div class="card__inner">
         ${card.control}
         ${card.controlBar}
-        ${card.textArea}
+        ${card.textarea}
         ${card.settings}
         ${card.statusBtns}
       </div>
@@ -33,14 +33,11 @@ function renderCard(data) {
 
   template.innerHTML = content;
   tasksContainer.appendChild(template.content);
-}
+};
 
-function changeTasks(task, number) {
+const changeTasks = (tasks) => {
   tasksContainer.innerHTML = ``;
-  const rand = !isNaN(+number) ? number : Math.floor(4 * Math.random()) + 1;
-  for (let i = 0; i < rand; i++) {
-    renderCard(task);
-  }
-}
+  tasks.forEach((task) => renderCard(task));
+};
 
 export {renderCard, changeTasks};

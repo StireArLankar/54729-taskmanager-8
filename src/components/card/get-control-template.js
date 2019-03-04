@@ -1,4 +1,4 @@
-function controlTemplate() {
+const getControlTemplate = () => {
   return `
   <div class="card__control">
     <button type="button" class="card__btn card__btn--edit">
@@ -15,6 +15,6 @@ function controlTemplate() {
     </button>
   </div>
   `;
-}
+};
 
-export default controlTemplate;
+export default getControlTemplate;
