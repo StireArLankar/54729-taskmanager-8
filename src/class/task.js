@@ -1,110 +1,77 @@
 import {renderCard} from "../components/card";
 import {tasksContainerName} from '../containers';
+import TastConstructor from './task-constructor';
 
 const tasksContainer = document.querySelector(tasksContainerName);
-class Task {
-  constructor({title, dueDate, tags, picture, color, repeatingDays, isFavourite, isDone}) {
-    this._title = title;
-    this._dueDate = dueDate;
-    this._tags = tags;
-    this._picture = picture;
-    this._color = color;
-    this._repeatingDays = repeatingDays;
+class Task extends TastConstructor {
+  constructor(data) {
+    super(data);
 
-    this.state = {
-      isEditing: false,
-      isDone,
-      isFavourite
-    };
+    this.state.isEditing = false;
 
-    this._bind = {};
+    this._ref = null;
+    this._form = null;
+
+    this.onEscDown = this.onEscDown.bind(this);
+    this.resetChanges = this.resetChanges.bind(this);
+    this.submitChanges = this.submitChanges.bind(this);
+    this.onOutsideClick = this.onOutsideClick.bind(this);
   }
 
-  get title() {
-    return this._title;
-  }
-
-  get dueDate() {
-    return this._dueDate;
-  }
-
-  get tags() {
-    return this._tags;
-  }
-
-  get picture() {
-    return this._picture;
-  }
-
-  get color() {
-    return this._color;
-  }
-
-  get repeatingDays() {
-    return this._repeatingDays;
-  }
-
-  get isRepeated() {
-    return Object.values(this.repeatingDays).some((it) => it === true);
-  }
-
-  _onEscDown(evt) {
+  onEscDown(evt) {
     if (evt.keyCode === 27) {
-      this._resetChanges();
+      this.resetChanges();
     }
   }
 
-  _bindedOnEscDown() {
-    this._bind.onEscDown = this._bind.onEscDown || this._onEscDown.bind(this);
-    return this._bind.onEscDown;
+  onOutsideClick(evt) {
+    if (!evt.path.includes(this._form)) {
+      this.resetChanges();
+    }
   }
 
-  _stopProp(evt) {
-    evt.stopPropagation();
+  resetChanges() {
+    this.setEditing(false);
   }
 
-  _setEditingTrue() {
-    this.state.isEditing = true;
-    this._ref.classList.add(`card--edit`);
-    document.addEventListener(`keydown`, this._bindedOnEscDown());
-    document.addEventListener(`click`, this._bindedResetChanges());
-    this._form.addEventListener(`click`, this._stopProp);
-    this._form.addEventListener(`keydown`, this._stopProp);
+  setEditing(check) {
+    this.state.isEditing = check;
+    if (check) {
+      this._ref.classList.add(`card--edit`);
+      this.addEditingListeners();
+    } else {
+      this._ref.classList.remove(`card--edit`);
+      this.removeEditingListeners();
+    }
   }
 
-  _setEditingFalse() {
-    this.state.isEditing = false;
-    this._ref.classList.remove(`card--edit`);
-    document.removeEventListener(`keydown`, this._bindedOnEscDown());
-    document.removeEventListener(`click`, this._bindedResetChanges());
-    this._form.removeEventListener(`click`, this._stopProp);
-    this._form.removeEventListener(`keydown`, this._stopProp);
+  addEditingListeners() {
+    document.addEventListener(`keydown`, this.onEscDown);
+    document.addEventListener(`click`, this.onOutsideClick);
   }
 
-  _submitEditingChanges(evt) {
-    this._setEditingFalse();
+  removeEditingListeners() {
+    document.removeEventListener(`keydown`, this.onEscDown);
+    document.removeEventListener(`click`, this.onOutsideClick);
+  }
+
+  submitChanges(evt) {
+    this.setEditing(false);
     evt.preventDefault();
   }
 
-  _resetChanges() {
-    this._setEditingFalse();
-  }
-
-  _bindedResetChanges() {
-    this._bind.resetChanges = this._bind.resetChanges || this._resetChanges.bind(this);
-    return this._bind.resetChanges;
-  }
-
-  _addListeners() {
+  addListeners() {
     const editBtn = this._ref.querySelector(`.card__btn--edit`);
-    this._form = this._ref.querySelector(`.card__form`);
-    editBtn.addEventListener(`click`, this._setEditingTrue.bind(this), true);
-    this._form.addEventListener(`submit`, this._submitEditingChanges.bind(this));
+    editBtn.addEventListener(`click`, () => {
+      this.setEditing(true);
+    });
+    this._form.addEventListener(`submit`, this.submitChanges);
   }
 
   render() {
     this._ref = renderCard(this);
-    this._addListeners();
+    this._form = this._ref.querySelector(`.card__form`);
+    this.addListeners();
   }
 
   unrender() {
