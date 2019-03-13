@@ -38,7 +38,7 @@ class TaskModel {
   }
 
   get isRepeated() {
-    return Object.values(this.repeatingDays).some((it) => it === true);
+    return Object.values(this.repeatingDays).some((isDayRepeated) => isDayRepeated === true);
   }
 }
 
