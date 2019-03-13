@@ -8,11 +8,10 @@ import {tasksContainerName} from '../../containers';
 const tasksContainer = document.querySelector(tasksContainerName);
 
 const renderCard = (data) => {
-  const {isRepeated, state: {isEditing}, color} = data;
+  const {isRepeated, color} = data;
   const article = document.createElement(`article`);
   const articleClasses = [
     `card`,
-    `${isEditing ? `card--edit` : null}`,
     `${isRepeated ? `card--repeat` : null}`,
     `${`card--${color}`}`
   ];
@@ -42,13 +41,54 @@ const renderCard = (data) => {
     </form>
   `;
 
-  tasksContainer.appendChild(article);
+  return article;
+};
+
+const renderCardEditor = (data) => {
+  const {isRepeated, color} = data;
+  const article = document.createElement(`article`);
+  const articleClasses = [
+    `card`,
+    `card--edit`,
+    `${isRepeated ? `card--repeat` : null}`,
+    `${`card--${color}`}`
+  ];
+  articleClasses.forEach((cls) => {
+    if (cls) {
+      article.classList.add(cls);
+    }
+  });
+
+  const card = {};
+
+  card.control = getControlTemplate();
+  card.controlBar = getControlBarTemplate();
+  card.textarea = getTextareaTemplate(data);
+  card.settings = getCardSettingsTemplate(data);
+  card.statusBtns = getStatusBtnsTemplate();
+
+  article.innerHTML = `
+    <form class="card__form" method="get">
+      <div class="card__inner">
+        ${card.control}
+        ${card.controlBar}
+        ${card.textarea}
+        ${card.settings}
+        ${card.statusBtns}
+      </div>
+    </form>
+  `;
+
   return article;
 };
 
 const changeTasks = (tasks) => {
+  const fragment = document.createDocumentFragment();
+  tasks.forEach((task) => {
+    fragment.appendChild(task.render());
+  });
   clearElement(tasksContainer);
-  tasks.forEach((task) => task.render());
+  tasksContainer.appendChild(fragment);
 };
 
 const clearElement = (el) => {
@@ -57,4 +97,4 @@ const clearElement = (el) => {
   }
 };
 
-export {renderCard, changeTasks};
+export {renderCard, renderCardEditor, changeTasks};

@@ -1,19 +1,11 @@
-import filterList from './filter-list';
-import {renderFilter, clearFiltersSection, addFiltersListener} from './components/filter';
-import {changeTasks} from './components/card';
 import {getTestTaskList} from './mock';
+import Board from './class/board';
 
-clearFiltersSection();
-filterList.forEach((filter) => renderFilter(filter));
-
-addFiltersListener(() => {
-  const rand = Math.floor(Math.random() * 5) + 1;
-  const tasks = getTestTaskList(rand);
-  changeTasks(tasks);
-});
+let board;
 
 window.addEventListener(`load`, () => {
-  const tasks = getTestTaskList(7);
-  changeTasks(tasks);
+  const tasks = getTestTaskList(12);
+  board = new Board(tasks);
+  board.render();
 });
 

@@ -1,5 +1,5 @@
-class TaskConstructor {
-  constructor({title, dueDate, tags, picture, color, repeatingDays, isFavourite, isDone}) {
+class TaskModel {
+  constructor({title, dueDate, tags, picture, color, repeatingDays, isFavourite, isDone, index}) {
     this._data = {
       title,
       dueDate,
@@ -7,9 +7,7 @@ class TaskConstructor {
       picture,
       color,
       repeatingDays,
-    };
-
-    this.state = {
+      index,
       isDone,
       isFavourite
     };
@@ -44,4 +42,4 @@ class TaskConstructor {
   }
 }
 
-export default TaskConstructor;
+export default TaskModel;
