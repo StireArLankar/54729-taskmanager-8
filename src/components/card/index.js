@@ -35,11 +35,12 @@ const renderCard = (data) => {
         ${card.control}
         ${card.controlBar}
         ${card.textarea}
-        ${card.settings}
-        ${card.statusBtns}
       </div>
     </form>
   `;
+
+  article.querySelector(`.card__inner`).appendChild(card.settings);
+  article.querySelector(`.card__inner`).appendChild(card.statusBtns);
 
   return article;
 };
@@ -47,17 +48,13 @@ const renderCard = (data) => {
 const renderCardEditor = (data) => {
   const {isRepeated, color} = data;
   const article = document.createElement(`article`);
-  const articleClasses = [
+  const baseClasses = [
     `card`,
     `card--edit`,
-    `${isRepeated ? `card--repeat` : null}`,
-    `${`card--${color}`}`
+    `${isRepeated ? `card--repeat` : null}`
   ];
-  articleClasses.forEach((cls) => {
-    if (cls) {
-      article.classList.add(cls);
-    }
-  });
+
+  addArticleClasses(baseClasses, `${`card--${color}`}`, article);
 
   const card = {};
 
@@ -73,11 +70,22 @@ const renderCardEditor = (data) => {
         ${card.control}
         ${card.controlBar}
         ${card.textarea}
-        ${card.settings}
-        ${card.statusBtns}
       </div>
     </form>
   `;
+
+  article.querySelector(`.card__inner`).appendChild(card.settings);
+  article.querySelector(`.card__inner`).appendChild(card.statusBtns);
+
+  const updateClass = (evt) => {
+    const value = evt.target.value;
+    addArticleClasses(baseClasses, `${`card--${value}`}`, article);
+  };
+
+  const colorPickers = article.querySelectorAll(`.card__color-input`);
+  colorPickers.forEach((cp) => {
+    cp.addEventListener(`change`, updateClass);
+  });
 
   return article;
 };
@@ -95,6 +103,19 @@ const clearElement = (el) => {
   while (el.children.length > 0) {
     el.removeChild(el.lastChild);
   }
+};
+
+const addArticleClasses = (baseClasses, another, article) => {
+  const articleClasses = [
+    ...baseClasses,
+    another
+  ];
+  article.className = ``;
+  articleClasses.forEach((cls) => {
+    if (cls) {
+      article.classList.add(cls);
+    }
+  });
 };
 
 export {renderCard, renderCardEditor, changeTasks};

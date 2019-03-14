@@ -37,6 +37,7 @@ class Board extends Component {
   renderTasks(tasks) {
     const fragment = document.createDocumentFragment();
     tasks.forEach((task) => {
+      task.unrender();
       fragment.appendChild(task.render());
     });
     clearElement(tasksContainer);
@@ -48,6 +49,10 @@ class Board extends Component {
     filterList.forEach((filter) => renderFilter(filter));
     this.renderTasks(this._tasks);
     this.bind();
+  }
+
+  update() {
+    this.renderTasks(this._tasks);
   }
 }
 
