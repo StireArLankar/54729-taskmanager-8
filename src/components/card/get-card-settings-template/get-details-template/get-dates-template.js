@@ -3,8 +3,10 @@ import {daysList} from '../../../../common';
 const getDatesTemplate = ({index, dueDate, repeatingDays}) => {
   const repeatCheck = repeatingDays ? repeatingDays : {};
   const date = dueDate ? new Date(dueDate) : undefined;
-  return `
-  <div class="card__dates">
+
+  const div = document.createElement(`div`);
+  div.classList.add(`card__dates`);
+  div.innerHTML = `
     <button class="card__date-deadline-toggle" type="button">
       date: <span class="card__date-status">${date ? `YES` : `NO`}</span>
     </button>
@@ -23,7 +25,7 @@ const getDatesTemplate = ({index, dueDate, repeatingDays}) => {
         <input
           class="card__time"
           type="text"
-          placeholder="11:15 PM"
+          placeholder="11:15"
           name="time"
           ${date ? `value="${printTime(date)}"` : ``}
         />
@@ -51,8 +53,9 @@ const getDatesTemplate = ({index, dueDate, repeatingDays}) => {
         `).join(``)}
       </div>
     </fieldset>
-  </div>
   `;
+
+  return div;
 };
 
 const printDate = (date) => {

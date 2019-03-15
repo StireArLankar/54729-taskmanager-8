@@ -1,12 +1,10 @@
 import {renderCard} from "../components/card";
-import Component from './component';
 import TaskModel from "./task-model";
 import TaskEditor from "./task-editor";
 
-class TaskComponent extends Component {
+class TaskComponent extends TaskModel {
   constructor(data, board) {
-    super();
-    this.model = new TaskModel(data);
+    super(data);
     this.board = board;
 
     this._ref = null;
@@ -14,7 +12,7 @@ class TaskComponent extends Component {
   }
 
   get template() {
-    return renderCard(this.model);
+    return renderCard(this);
   }
 
   openEditor(evt) {
@@ -42,6 +40,12 @@ class TaskComponent extends Component {
   unbind() {
     const editBtn = this._ref.querySelector(`.card__btn--edit`);
     editBtn.removeEventListener(`click`, this.openEditor);
+  }
+
+  update(data) {
+    this.updateModel(data);
+    this.closeEditor();
+    this.board.update();
   }
 
   unrender() {

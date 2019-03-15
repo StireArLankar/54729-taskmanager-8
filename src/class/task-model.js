@@ -1,5 +1,7 @@
-class TaskModel {
+import Component from './component';
+class TaskModel extends Component {
   constructor({title, dueDate, tags, picture, color, repeatingDays, isFavourite, isDone, index}) {
+    super();
     this._data = {
       title,
       dueDate,
@@ -11,6 +13,10 @@ class TaskModel {
       isDone,
       isFavourite
     };
+  }
+
+  get data() {
+    return this._data;
   }
 
   get title() {
@@ -39,6 +45,22 @@ class TaskModel {
 
   get isRepeated() {
     return Object.values(this.repeatingDays).some((isDayRepeated) => isDayRepeated === true);
+  }
+
+  get isDone() {
+    return this._data.isDone;
+  }
+
+  get isFavourite() {
+    return this._data.isFavourite;
+  }
+
+  get index() {
+    return this._data.index;
+  }
+
+  updateModel(data) {
+    this._data = data;
   }
 }
 
