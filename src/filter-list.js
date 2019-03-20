@@ -2,40 +2,32 @@ const filtersList = [
   {
     id: `filter__all`,
     name: `ALL`,
-    count: 15,
-    checked: true
   },
   {
     id: `filter__overdue`,
-    name: `OVERDUE`,
-    count: 0,
-    disabled: true
+    name: `OVERDUE`
   },
   {
     id: `filter__today`,
     name: `TODAY`,
-    count: 0,
-    disabled: true
   },
   {
     id: `filter__favorites`,
     name: `FAVORITES`,
-    count: 7
+    disabled: true
   },
   {
     id: `filter__repeating`,
-    name: `Repeating`,
-    count: 2
+    name: `REPEATING`,
   },
   {
     id: `filter__tags`,
-    name: `Tags`,
-    count: 6
+    name: `TAGS`,
+    disabled: true
   },
   {
     id: `filter__archive`,
     name: `ARCHIVE`,
-    count: 115
   },
 ];
 

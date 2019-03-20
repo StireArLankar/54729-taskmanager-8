@@ -3,9 +3,14 @@ import Component from './component';
 import flatpickr from "flatpickr";
 
 class TaskEditor extends Component {
-  constructor(task) {
+  constructor(data, onReset, onSubmit, onDelete) {
     super();
-    this.task = task;
+    this.data = data;
+    this.cb = {
+      onReset,
+      onSubmit,
+      onDelete
+    };
 
     this._ref = null;
     this._form = null;
@@ -13,12 +18,13 @@ class TaskEditor extends Component {
     this._flatTime = null;
 
     this.onEscDown = this.onEscDown.bind(this);
-    this.submitChanges = this.submitChanges.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
     this.onOutsideClick = this.onOutsideClick.bind(this);
+    this.onDelete = this.onDelete.bind(this);
   }
 
   get template() {
-    return renderCardEditor(this.task);
+    return renderCardEditor(this.data);
   }
 
   onEscDown(evt) {
@@ -35,39 +41,35 @@ class TaskEditor extends Component {
 
   resetChanges(evt) {
     evt.preventDefault();
-    this.task.closeEditor();
+    this.cb.onReset();
+    // this.task.closeEditor();
   }
 
   getDataFromForm() {
-    return formDataConverter(this._form, this.task);
+    return formDataConverter(this._form, this.data);
   }
 
-  submitChanges(evt) {
+  onSubmit(evt) {
     evt.preventDefault();
     const data = this.getDataFromForm();
-    this.task.update(data);
-    this.task.closeEditor();
+    this.cb.onSubmit(data);
+    // this.task.update(data);
+    // this.task.closeEditor();
+  }
+
+  onDelete(evt) {
+    evt.preventDefault();
+    this.cb.onDelete();
   }
 
   render() {
-    const card = this.task.reference;
-    const container = card.parentNode;
     this._ref = this.template;
-
     this._form = this._ref.querySelector(`form`);
-
     this.bind();
-
-    container.replaceChild(this._ref, card);
     return this._ref;
   }
 
   unrender() {
-    const card = this.task.reference;
-    const container = this._ref.parentNode;
-
-    container.replaceChild(card, this._ref);
-
     this.unbind();
     this._flatDate = null;
     this._flatTime = null;
@@ -78,7 +80,8 @@ class TaskEditor extends Component {
     document.addEventListener(`keydown`, this.onEscDown);
     document.addEventListener(`click`, this.onOutsideClick);
     this._form.addEventListener(`submit`, preventDefault);
-    this._form.querySelector(`.card__save`).addEventListener(`click`, this.submitChanges);
+    this._form.querySelector(`.card__save`).addEventListener(`click`, this.onSubmit);
+    this._form.querySelector(`.card__delete`).addEventListener(`click`, this.onDelete);
 
     const dateInput = this._form.querySelector(`.card__date`);
     this._flatDate = flatpickr(dateInput, {
@@ -104,7 +107,8 @@ class TaskEditor extends Component {
     document.removeEventListener(`keydown`, this.onEscDown);
     document.removeEventListener(`click`, this.onOutsideClick);
     this._form.removeEventListener(`submit`, preventDefault);
-    this._form.querySelector(`.card__save`).removeEventListener(`click`, this.submitChanges);
+    this._form.querySelector(`.card__save`).removeEventListener(`click`, this.onSubmit);
+    this._form.querySelector(`.card__delete`).removeEventListener(`click`, this.onDelete);
     this._form = null;
     this._flatDate.calendarContainer.removeEventListener(`click`, stopProp);
     this._flatTime.calendarContainer.removeEventListener(`click`, stopProp);
@@ -127,28 +131,48 @@ const formDataConverter = (form, oldData) => {
     object[pair[0]] = pair[1];
   }
 
-  const [day, month, year] = object.date.split(`-`);
-  const [hour, min] = object.time.split(`:`);
-  const date = new Date(year, month, day, hour, min);
+  let date;
+  const dateFieldset = form.querySelector(`.card__date-deadline`);
+  if (dateFieldset.disabled) {
+    date = undefined;
+  } else {
+    const [day, month, year] = object.date.split(`-`);
+    const [hour, min] = object.time.split(`:`);
+    date = Number(new Date(year, month - 1, day, hour, min));
+  }
 
-  const repeatCheckboxes = form.querySelectorAll(`.card__repeat-day-input`);
-  const repeatCheck = [...repeatCheckboxes].map((day_) => {
-    return {
-      value: day_.value,
-      checked: day_.checked
+  const repeatFieldset = form.querySelector(`.card__repeat-days`);
+  let repeatingDays;
+  if (repeatFieldset.disabled) {
+    repeatingDays = {
+      'mo': false,
+      'tu': false,
+      'we': false,
+      'th': false,
+      'fr': false,
+      'sa': false,
+      'su': false,
     };
-  });
-  const repeatingDays = repeatCheck.reduce((acc, check) => {
-    acc[check.value] = check.checked;
-    return acc;
-  }, {});
+  } else {
+    const repeatCheckboxes = form.querySelectorAll(`.card__repeat-day-input`);
+    const repeatCheck = [...repeatCheckboxes].map((day_) => {
+      return {
+        value: day_.value,
+        checked: day_.checked
+      };
+    });
+    repeatingDays = repeatCheck.reduce((acc, check) => {
+      acc[check.value] = check.checked;
+      return acc;
+    }, {});
+  }
 
   const tagsInputs = form.querySelectorAll(`.card__hashtag-hidden-input`);
   const tags = [...tagsInputs].map((input) => input.value);
 
   const data = {
     title: object.text,
-    dueDate: Number(date),
+    dueDate: date,
     color: object.color,
     picture: oldData.picture,
     index: oldData.index,
