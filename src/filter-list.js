@@ -12,8 +12,8 @@ const filtersList = [
     name: `TODAY`,
   },
   {
-    id: `filter__favorites`,
-    name: `FAVORITES`,
+    id: `filter__favourites`,
+    name: `FAVOURITES`,
     disabled: true
   },
   {
