@@ -87,6 +87,11 @@ const renderCardEditor = (data) => {
     cp.addEventListener(`change`, updateClass);
   });
 
+  const updateRepeatClass = () => {
+    article.classList.toggle(`card--repeat`);
+  };
+  article.querySelector(`.card__repeat-toggle`).addEventListener(`click`, updateRepeatClass);
+
   return article;
 };
 

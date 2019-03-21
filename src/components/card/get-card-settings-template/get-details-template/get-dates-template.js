@@ -1,7 +1,6 @@
 import {daysList} from '../../../../common';
 
-const getDatesTemplate = ({index, dueDate, repeatingDays}) => {
-  const repeatCheck = repeatingDays ? repeatingDays : {};
+const getDatesTemplate = ({index, dueDate, repeatingDays, isRepeated}) => {
   const date = dueDate ? new Date(dueDate) : undefined;
 
   const div = document.createElement(`div`);
@@ -33,10 +32,10 @@ const getDatesTemplate = ({index, dueDate, repeatingDays}) => {
     </fieldset>
 
     <button class="card__repeat-toggle" type="button">
-      repeat:<span class="card__repeat-status">${repeatingDays ? `YES` : `NO`}</span>
+      repeat:<span class="card__repeat-status">${isRepeated ? `YES` : `NO`}</span>
     </button>
 
-    <fieldset class="card__repeat-days" ${repeatingDays ? `` : `disabled`}>
+    <fieldset class="card__repeat-days" ${isRepeated ? `` : `disabled`}>
       <div class="card__repeat-days-inner">
         ${daysList.map((day) => `
           <input
@@ -45,7 +44,7 @@ const getDatesTemplate = ({index, dueDate, repeatingDays}) => {
             id="repeat-${day}-${index}"
             name="repeat"
             value=${day}
-            ${repeatCheck[day] ? `checked` : ``}
+            ${repeatingDays[day] ? `checked` : ``}
           />
           <label class="card__repeat-day" for="repeat-${day}-${index}"
             >${day}</label
@@ -54,6 +53,38 @@ const getDatesTemplate = ({index, dueDate, repeatingDays}) => {
       </div>
     </fieldset>
   `;
+
+  const toggleRepeating = div.querySelector(`.card__repeat-toggle`);
+  const updateRepeating = () => {
+    const span = toggleRepeating.querySelector(`.card__repeat-status`);
+    const fieldset = div.querySelector(`.card__repeat-days`);
+    if (span.textContent === `YES`) {
+      span.textContent = `NO`;
+      fieldset.disabled = true;
+      fieldset.style.display = `none`;
+    } else {
+      span.textContent = `YES`;
+      fieldset.disabled = false;
+      fieldset.style.display = `block`;
+    }
+  };
+  toggleRepeating.addEventListener(`click`, updateRepeating);
+
+  const toggleDate = div.querySelector(`.card__date-deadline-toggle`);
+  const updateDate = () => {
+    const span = toggleDate.querySelector(`.card__date-status`);
+    const fieldset = div.querySelector(`.card__date-deadline`);
+    if (span.textContent === `YES`) {
+      span.textContent = `NO`;
+      fieldset.disabled = true;
+      fieldset.style.display = `none`;
+    } else {
+      span.textContent = `YES`;
+      fieldset.disabled = false;
+      fieldset.style.display = `block`;
+    }
+  };
+  toggleDate.addEventListener(`click`, updateDate);
 
   return div;
 };

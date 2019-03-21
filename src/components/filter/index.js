@@ -3,11 +3,11 @@ import getLabelTemplate from './get-label-template';
 
 const filterSection = document.querySelector(`.main__filter`);
 
-const renderFilter = (data) => {
-  const {id, name, count, checked = false, disabled = false} = data;
+const renderFilter = (data, count) => {
+  const {id, name, checked = false} = data;
   const template = document.createElement(`template`);
 
-  const input = getInputTemplate(id, checked, disabled);
+  const input = getInputTemplate(id, checked, count, name);
   const label = getLabelTemplate(id, name, count);
 
   template.innerHTML = input + label;
