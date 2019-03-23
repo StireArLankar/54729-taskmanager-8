@@ -3,13 +3,15 @@ import filterList from '../filter-list';
 import {renderFilter, clearFiltersSection, addFiltersListener} from '../components/filter';
 import TaskComponent from "./task-component";
 import {tasksContainerName} from '../containers';
-import {colorList} from '../common';
 import ChartController from './chart-controller';
+import ServiceAPI from '../service/service-api';
 
 const tasksContainer = document.querySelector(tasksContainerName);
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
+const END_POINT = `https://es8-demo-srv.appspot.com/task-manager`;
 
 class Board extends Component {
-  constructor(tasks) {
+  constructor() {
     super();
     this.onEditorOpening = this.onEditorOpening.bind(this);
     this.onTaskUpdate = this.onTaskUpdate.bind(this);
@@ -18,11 +20,9 @@ class Board extends Component {
     this.setViewBoard = this.setViewBoard.bind(this);
     this.setViewStats = this.setViewStats.bind(this);
 
-    this._tasks = tasks.map((task, index) => {
-      const temp = task;
-      temp.index = index;
-      return new TaskComponent(temp, this.onEditorOpening, this.onTaskUpdate, this.onTaskDelete);
-    });
+    this.api = new ServiceAPI({endPoint: END_POINT, authorization: AUTHORIZATION});
+
+    this._tasks = [];
     this._renderedTasks = null;
     this._filterMethod = `ALL`;
 
@@ -53,18 +53,38 @@ class Board extends Component {
     });
   }
 
-  onTaskUpdate() {
-    this.update();
+  _updateTask(data, index) {
+    const indexInArray = this.tasks.findIndex((el) => el.index === index);
+    this._tasks[indexInArray].unrender();
+    this._tasks[indexInArray] = new TaskComponent(data, this.onEditorOpening, this.onTaskUpdate, this.onTaskDelete);
   }
 
-  onTaskDelete(task) {
-    const index = this.tasks.findIndex((el) => el === task);
+  onTaskUpdate(data, index, taskComponent) {
+    this.api.updateTask({id: index, data})
+      .then((updatedData) => this._updateTask(updatedData, index))
+      .then(() => this.update())
+      .catch(() => {
+        taskComponent.onError();
+      });
+  }
+
+  _deleteTask(index) {
+    const indexInArray = this.tasks.findIndex((el) => el.index === index);
     const temp = [
-      ...this.tasks.slice(0, index),
-      ...this.tasks.slice(index + 1)
+      ...this.tasks.slice(0, indexInArray),
+      ...this.tasks.slice(indexInArray + 1)
     ];
+    this._tasks[indexInArray].unrender();
     this._tasks = temp;
-    this.update();
+  }
+
+  onTaskDelete(index, taskComponent) {
+    this.api.deleteTask({id: index})
+      .then(() => this._deleteTask(index))
+      .then(() => this.update())
+      .catch(() => {
+        taskComponent.onError();
+      });
   }
 
   renderTasks() {
@@ -73,6 +93,23 @@ class Board extends Component {
       fragment.appendChild(task.render());
     });
     tasksContainer.appendChild(fragment);
+  }
+
+  start() {
+    this.api.getTasks()
+      .then((tasks) => {
+        this._tasks.forEach((task) => {
+          task.closeEditor();
+          task.unrender();
+          task = null;
+        });
+        this._tasks = tasks.map((task) => {
+          return new TaskComponent(task, this.onEditorOpening, this.onTaskUpdate, this.onTaskDelete);
+        });
+      })
+      .then(() => {
+        this.render();
+      });
   }
 
   render() {
@@ -93,6 +130,10 @@ class Board extends Component {
 
   update() {
     this.renderFilterList();
+    this.boardUpdate();
+  }
+
+  boardUpdate() {
     this.filterTasks();
     this.unrenderTasks();
     this.renderTasks();
@@ -106,7 +147,7 @@ class Board extends Component {
     this.links.board.addEventListener(`change`, this.setViewBoard);
     this.links.stats.addEventListener(`change`, this.setViewStats);
     this.chartController = new ChartController(this._tasks);
-    this.chartController.initCharts();
+    this.chartController.initCharts(this._tasks);
   }
 
   unbind() {
@@ -135,7 +176,7 @@ class Board extends Component {
 
   onFilterChange(evt) {
     this._filterMethod = evt.target.value;
-    this.update();
+    this.boardUpdate();
   }
 
   setViewBoard() {
@@ -152,7 +193,7 @@ class Board extends Component {
       return;
     }
     this.state.isStatisticShown = true;
-    this.chartController.updateCharts();
+    this.chartController.updateCharts(this._tasks);
     this.sections.board.classList.add(`visually-hidden`);
     this.sections.stats.classList.remove(`visually-hidden`);
   }

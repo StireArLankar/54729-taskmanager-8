@@ -2,9 +2,7 @@ import ChartPieComponent from './chart-pie-component';
 import {colorList} from '../common';
 
 class ChartController {
-  constructor(tasks) {
-    this._tasks = tasks;
-
+  constructor() {
     this.charts = {
       colors: {
         selector: `.statistic__colors`,
@@ -13,12 +11,12 @@ class ChartController {
     };
   }
 
-  initCharts() {
-    this._initColorChart();
+  initCharts(tasks) {
+    this._initColorChart(tasks);
   }
 
-  _initColorChart() {
-    const [data, bgColors, labels] = getColorStats(this._tasks, colorList);
+  _initColorChart(tasks) {
+    const [data, bgColors, labels] = getColorStats(tasks, colorList);
 
     this.charts.colors.data = data;
     this.charts.colors.labels = labels;
@@ -27,8 +25,8 @@ class ChartController {
     this.charts.colors.chart = new ChartPieComponent(this.charts.colors);
   }
 
-  updateCharts() {
-    const [data, bgColors, labels] = getColorStats(this._tasks, colorList);
+  updateCharts(tasks) {
+    const [data, bgColors, labels] = getColorStats(tasks, colorList);
     this.charts.colors.chart.updateChart(data, bgColors, labels);
   }
 }

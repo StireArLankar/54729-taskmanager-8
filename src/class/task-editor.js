@@ -1,6 +1,7 @@
 import {renderCardEditor} from "../components/card";
 import Component from './component';
 import flatpickr from "flatpickr";
+import TaskModel from './task-model';
 
 class TaskEditor extends Component {
   constructor(data, onReset, onSubmit, onDelete) {
@@ -42,7 +43,30 @@ class TaskEditor extends Component {
   resetChanges(evt) {
     evt.preventDefault();
     this.cb.onReset();
-    // this.task.closeEditor();
+  }
+
+  onError() {
+    this.shake();
+    this.unblock();
+  }
+
+  shake() {
+    const ANIMATION_TIMEOUT = 600;
+    this._ref.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._ref.style.animation = ``;
+    }, ANIMATION_TIMEOUT);
+  }
+
+  block() {
+    this._ref.querySelector(`.card__save`).disabled = false;
+    this._ref.querySelector(`.card__text`).disabled = false;
+  }
+
+  unblock() {
+    this._ref.querySelector(`.card__save`).disabled = true;
+    this._ref.querySelector(`.card__text`).disabled = true;
   }
 
   getDataFromForm() {
@@ -52,13 +76,14 @@ class TaskEditor extends Component {
   onSubmit(evt) {
     evt.preventDefault();
     const data = this.getDataFromForm();
-    this.cb.onSubmit(data);
-    // this.task.update(data);
-    // this.task.closeEditor();
+    const taskData = TaskModel.raw(data);
+    this.block();
+    this.cb.onSubmit(taskData);
   }
 
   onDelete(evt) {
     evt.preventDefault();
+    this.block();
     this.cb.onDelete();
   }
 

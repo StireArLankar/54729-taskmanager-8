@@ -40,13 +40,21 @@ class TaskComponent extends TaskModel {
     this.closeEditor();
   }
 
-  onEditorSubmit(data) {
-    this.update(data);
-    this.closeEditor();
+  onEditorSubmit(rawData) {
+    // this.update(data);
+    // this.closeEditor();
+    this.cb.onTaskUpdate(rawData, this.index, this);
   }
 
+  onError() {
+    this.editor.onError();
+  }
+  // onEditorDelete() {
+  //   this.cb.onTaskDelete(this;
+  // }
+
   onEditorDelete() {
-    this.cb.onTaskDelete(this);
+    this.cb.onTaskDelete(this.index, this);
   }
 
   closeEditor() {
@@ -73,12 +81,11 @@ class TaskComponent extends TaskModel {
     editBtn.removeEventListener(`click`, this.openEditor);
   }
 
-  update(data) {
-    this.updateModel(data);
-    this.closeEditor();
-    this.cb.onTaskUpdate();
-    // this.board.update();
-  }
+  // update(data) {
+  //   this.cb.onTaskUpdate(this.raw, this.index);
+  //   // this.updateModel(data);
+  //   this.closeEditor();
+  // }
 
   unrender() {
     if (this._ref) {

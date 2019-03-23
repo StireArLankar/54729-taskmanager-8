@@ -1,17 +1,31 @@
 import Component from './component';
 class TaskModel extends Component {
-  constructor({title, dueDate, tags, picture, color, repeatingDays, isFavourite, isDone, index}) {
+  constructor(data) {
     super();
     this._data = {
-      title,
-      dueDate,
-      tags,
-      picture,
-      color,
-      repeatingDays,
-      index,
-      isDone,
-      isFavourite
+      title: data[`title`],
+      dueDate: new Date(data[`due_date`]),
+      tags: toUniqueArray(data[`tags`]),
+      picture: data[`picture`],
+      color: data[`color`],
+      repeatingDays: data[`repeating_days`],
+      index: data[`id`],
+      isDone: Boolean(data[`is_done`]),
+      isFavourite: Boolean(data[`is_favorite`])
+    };
+  }
+
+  static raw(data) {
+    return {
+      'id': data.index,
+      'title': data.title,
+      'due_date': new Date(data.dueDate),
+      'tags': data.tags,
+      'picture': data.picture,
+      'repeating_days': data.repeatingDays,
+      'color': data.color,
+      'is_favorite': data.isFavourite,
+      'is_done': data.isDone,
     };
   }
 
@@ -63,5 +77,10 @@ class TaskModel extends Component {
     this._data = data;
   }
 }
+
+const toUniqueArray = (array) => {
+  const temp = new Set(array);
+  return [...temp];
+};
 
 export default TaskModel;
