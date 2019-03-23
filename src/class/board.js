@@ -3,8 +3,8 @@ import filterList from '../filter-list';
 import {renderFilter, clearFiltersSection, addFiltersListener} from '../components/filter';
 import TaskComponent from "./task-component";
 import {tasksContainerName} from '../containers';
-import ChartPieComponent from './chart-pie-component';
 import {colorList} from '../common';
+import ChartController from './chart-controller';
 
 const tasksContainer = document.querySelector(tasksContainerName);
 
@@ -40,9 +40,7 @@ class Board extends Component {
       stats: null
     };
 
-    this.charts = {
-      colors: null
-    };
+    this.chartController = null;
   }
 
   get tasks() {
@@ -107,7 +105,8 @@ class Board extends Component {
     this.sections.stats = document.querySelector(`.statistic`);
     this.links.board.addEventListener(`change`, this.setViewBoard);
     this.links.stats.addEventListener(`change`, this.setViewStats);
-    this.initColorChart();
+    this.chartController = new ChartController(this._tasks);
+    this.chartController.initCharts();
   }
 
   unbind() {
@@ -115,19 +114,7 @@ class Board extends Component {
     this.links.stats.removeEventListener(`change`, this.setViewStats);
     this.links = null;
     this.sections = null;
-  }
-
-  initColorChart() {
-    const [data, bgColors, labels] = getColorStats(this._tasks, colorList);
-
-    this.charts.colors = {
-      selector: `.statistic__colors`,
-      title: `DONE BY: COLORS`,
-      data,
-      labels,
-      bgColors
-    };
-    this.charts.colors.chart = new ChartPieComponent(this.charts.colors);
+    this.chartController = null;
   }
 
   filterTasks() {
@@ -165,14 +152,9 @@ class Board extends Component {
       return;
     }
     this.state.isStatisticShown = true;
-    this.updateStats();
+    this.chartController.updateCharts();
     this.sections.board.classList.add(`visually-hidden`);
     this.sections.stats.classList.remove(`visually-hidden`);
-  }
-
-  updateStats() {
-    const [data] = getColorStats(this._tasks, colorList);
-    this.charts.colors.chart.updateChart(data);
   }
 }
 
@@ -257,26 +239,6 @@ const getDateString = (date) => {
   const month = temp.getMonth();
   const day = temp.getDate();
   return `${day} ${month} ${year}`;
-};
-
-const getColorStats = (tasks, colorsList) => {
-  const colorObj = colorsList.reduce((acc, color) => {
-    acc[color] = 0;
-    return acc;
-  }, {});
-
-  const colorStats = tasks.reduce((acc, task) => {
-    acc[task.color]++;
-    return acc;
-  }, colorObj);
-
-  const colors = [...Object.keys(colorStats)];
-  const data = [...Object.values(colorStats)];
-  const labels = colors.map((color) => {
-    return `#${color}`;
-  });
-
-  return [data, colors, labels];
 };
 
 export default Board;
